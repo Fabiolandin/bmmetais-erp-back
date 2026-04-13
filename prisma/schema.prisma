@@ -1,13 +1,106 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+}
+
+model Cliente {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  cpf       String
+  telefone  String
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  pedidos   Pedido[]
+}
+
+model Pedido {
+  id            Int          @id @default(autoincrement())
+  clienteId     Int
+  cliente       Cliente      @relation(fields: [clienteId], references: [id])
+  funcionarioId Int
+  funcionario   Funcionario  @relation(fields: [funcionarioId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  items         ItemPedido[]
+}
+
+model ItemPedido {
+  id             Int      @id @default(autoincrement())
+  pedidoId       Int
+  pedido         Pedido   @relation(fields: [pedidoId], references: [id])
+  produtoId      Int
+  produto        Produto  @relation(fields: [produtoId], references: [id])
+  quantidade     Int
+  preco_unitario Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Produto {
+  id                  Int               @id @default(autoincrement())
+  nome                String
+  preco               Float
+  categoria_produtoId Int
+  categoria           Categoria_Produto @relation(fields: [categoria_produtoId], references: [id])
+  estoque             Int
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  ItemPedido          ItemPedido[]
+  ItemCompra          ItemCompra[]
+}
+
+model Categoria_Produto {
+  id        Int       @id @default(autoincrement())
+  nome      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  produtos  Produto[]
+}
+
+model Funcionario {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  cpf       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Pedido    Pedido[]
+  Compra    Compra[]
+}
+
+model Compra {
+  id            Int          @id @default(autoincrement())
+  fornecedorId  Int
+  fornecedor    Fornecedor   @relation(fields: [fornecedorId], references: [id])
+  funcionarioId Int
+  funcionario   Funcionario  @relation(fields: [funcionarioId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  items         ItemCompra[]
+}
+
+model ItemCompra {
+  id             Int      @id @default(autoincrement())
+  produtoId      Int
+  produto        Produto  @relation(fields: [produtoId], references: [id])
+  compraId       Int
+  compra         Compra   @relation(fields: [compraId], references: [id])
+  quantidade     Int
+  preco_unitario Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Fornecedor {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  cnpj      String
+  telefone  String
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  compras   Compra[]
 }
