@@ -2,13 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProdutosService } from './produtos.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
+import { Produto } from '@prisma/client';
 
 @Controller('produtos')
 export class ProdutosController {
-  constructor(private readonly produtosService: ProdutosService) {}
+  constructor(private readonly produtosService: ProdutosService) { }
 
   @Post()
-  create(@Body() createProdutoDto: CreateProdutoDto) {
+  produtoCreate(
+    @Body() createProdutoDto: CreateProdutoDto
+  ): Promise<Produto> {
     return this.produtosService.create(createProdutoDto);
   }
 

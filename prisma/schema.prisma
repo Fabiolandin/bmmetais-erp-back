@@ -43,6 +43,7 @@ model ItemPedido {
 model Produto {
   id                  Int               @id @default(autoincrement())
   nome                String
+  descricao           String
   preco               Float
   categoria_produtoId Int
   categoria           Categoria_Produto @relation(fields: [categoria_produtoId], references: [id])
