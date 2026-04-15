@@ -2,13 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { FornecedorService } from './fornecedor.service';
 import { CreateFornecedorDto } from './dto/create-fornecedor.dto';
 import { UpdateFornecedorDto } from './dto/update-fornecedor.dto';
+import { Fornecedor } from '@prisma/client';
 
 @Controller('fornecedor')
 export class FornecedorController {
-  constructor(private readonly fornecedorService: FornecedorService) {}
+  constructor(private readonly fornecedorService: FornecedorService) { }
 
   @Post()
-  create(@Body() createFornecedorDto: CreateFornecedorDto) {
+  create(
+    @Body() createFornecedorDto: CreateFornecedorDto
+  ): Promise<Fornecedor> {
     return this.fornecedorService.create(createFornecedorDto);
   }
 
