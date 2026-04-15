@@ -1,7 +1,18 @@
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+
 export class CreateProdutoDto {
+    @IsString()
+    @IsNotEmpty()
     nome: string
+
+    @IsString()
+    @IsNotEmpty()
     descricao: string
+
+    @IsNumber()
+    @IsNotEmpty()
     preco: number
+
     estoque: number
     categoria_produtoId: number
 }

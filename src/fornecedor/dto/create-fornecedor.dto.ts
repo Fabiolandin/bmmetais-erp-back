@@ -1,6 +1,19 @@
+import { IsNotEmpty, IsString } from "class-validator";
+
 export class CreateFornecedorDto {
-    nome: string;
-    cnpj: string;
-    telefone: string;
-    email: string;
+    @IsString()
+    @IsNotEmpty()
+    nome: string
+
+    @IsString()
+    @IsNotEmpty()
+    cnpj: string
+
+    @IsString()
+    @IsNotEmpty()
+    telefone: string
+
+    @IsString()
+    @IsNotEmpty()
+    email: string
 }
