@@ -24,8 +24,8 @@ export class PedidoService {
     return await this.prisma.pedido.findMany({
       include: {
         cliente: { select: { nome: true, telefone: true } },
-        funcionario: { select: { nome: true, cpf: true } },
-        items: { include: { produto: { select: { nome: true, preco: true, estoque: true, categoria_produtoId: true, descricao: true, id: true } } } }
+        funcionario: { select: { nome: true } },
+        items: { include: { produto: { select: { nome: true, preco: true, estoque: true, categoria_produtoId: true, id: true } } } }
       }
     });
   }
@@ -33,6 +33,17 @@ export class PedidoService {
   findOne(id: number) {
     return this.prisma.pedido.findUnique({
       where: { id },
+      select: {
+        id: true, clienteId: true, funcionarioId: true,
+        cliente: { select: { nome: true, telefone: true } },
+        funcionario: { select: { nome: true } },
+        items: {
+          select: {
+            id: true, quantidade: true, preco_unitario: true,
+            produto: { select: { id: true, nome: true, preco: true, estoque: true, categoria_produtoId: true } }
+          }
+        }
+      }
     });
   }
 

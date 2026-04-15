@@ -33,6 +33,17 @@ export class CompraService {
   findOne(id: number) {
     return this.prisma.compra.findUnique({
       where: { id },
+      select: {
+        id: true, fornecedorId: true, funcionarioId: true,
+        fornecedor: { select: { nome: true, cnpj: true } },
+        funcionario: { select: { nome: true } },
+        items: {
+          select: {
+            id: true, quantidade: true, preco_unitario: true,
+            produto: { select: { id: true, nome: true, preco: true, estoque: true, descricao: true } }
+          }
+        }
+      }
     });
   }
 
