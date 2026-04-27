@@ -60,7 +60,13 @@ export class PedidoService {
     });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    // Primeiro deletamos os itens vinculados ao pedido
+    await this.prisma.itemPedido.deleteMany({
+      where: { pedidoId: id }
+    });
+    
+    // Depois deletamos o pedido
     return this.prisma.pedido.delete({
       where: { id },
     });
