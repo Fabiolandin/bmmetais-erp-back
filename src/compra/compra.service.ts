@@ -60,8 +60,12 @@ export class CompraService {
     });
   }
 
-  remove(id: number) {
-    return this.prisma.compra.delete({
+  async remove(id: number) {
+    //primeiro deletamos os intes vinculados a compra
+    await this.prisma.itemCompra.deleteMany({
+      where: { compraId: id },
+    });
+    return await this.prisma.compra.delete({
       where: { id },
     });
   }
