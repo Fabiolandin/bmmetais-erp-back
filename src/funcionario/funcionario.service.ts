@@ -14,8 +14,22 @@ export class FuncionarioService {
     })
   }
 
-  findAll() {
-    return this.prisma.funcionario.findMany()
+  async findAll(page: number = 1, limit: number = 7) {
+    //calcula quantos registros pular
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.funcionario.findMany({
+        skip,
+        take: limit,
+        orderBy: { id: 'asc' },
+      }),
+      this.prisma.funcionario.count(),
+    ]);
+
+    //retornando objeto com data:lista de funcionarios, total:total de funcionarios, 
+    //page:pagina atual e totalPages:total de paginas(arredondando pra cima)
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   findOne(id: number) {
