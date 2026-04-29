@@ -14,8 +14,20 @@ export class ClienteService {
     });
   }
 
-  findAll() {
-    return this.prisma.cliente.findMany();
+  async findAll(page: number = 1, limit: number = 7) {
+    //calcula quantos registros pular
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.cliente.findMany({
+        skip,
+        take: limit,
+        orderBy: { id: 'asc' },
+      }),
+      this.prisma.cliente.count(),
+    ]);
+
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   findOne(id: number) {
