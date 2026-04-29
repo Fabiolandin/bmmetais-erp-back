@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { FuncionarioService } from './funcionario.service';
 import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
@@ -16,8 +16,11 @@ export class FuncionarioController {
   }
 
   @Get()
-  findAll() {
-    return this.funcionarioService.findAll();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '7',
+  ) {
+    return this.funcionarioService.findAll(+page, +limit);
   }
 
   @Get(':id')
