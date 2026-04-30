@@ -22,8 +22,21 @@ export class ProdutosService {
     });
   }
 
-  findAll() {
-    return this.prisma.produto.findMany();
+  async findAll(page: number = 1, limit: number = 7) {
+    //Calcula quantos registros pular
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.produto.findMany({
+        skip,
+        take: limit,
+        orderBy: { id: 'asc' },
+      }),
+      this.prisma.produto.count(),
+    ]);
+
+    return { data, total, page, totalPages: Math.ceil(total / limit) }
+
   }
 
   findOne(id: number) {

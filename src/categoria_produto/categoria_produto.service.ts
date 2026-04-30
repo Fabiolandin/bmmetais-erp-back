@@ -14,8 +14,20 @@ export class CategoriaProdutoService {
     });
   }
 
-  findAll() {
-    return this.prisma.categoria_Produto.findMany();
+  async findAll(page: number = 1, limit: number = 7) {
+    //Calcula quantos registros pular
+    const skip = (page - 1) * limit
+
+    const [data, total] = await Promise.all([
+      this.prisma.categoria_Produto.findMany({
+        skip,
+        take: limit,
+        orderBy: { id: 'asc' },
+      }),
+      this.prisma.categoria_Produto.count(),
+    ])
+
+    return { data, total, page, totalPages: Math.ceil(total / limit) }
   }
 
   findOne(id: number) {
