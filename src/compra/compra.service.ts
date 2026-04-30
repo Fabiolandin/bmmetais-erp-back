@@ -20,14 +20,24 @@ export class CompraService {
     });
   }
 
-  async findAll() {
-    return await this.prisma.compra.findMany({
-      include: {
-        fornecedor: { select: { nome: true, cnpj: true } },
-        funcionario: { select: { nome: true, cpf: true } },
-        items: { include: { produto: { select: { nome: true, preco: true, estoque: true, categoria_produtoId: true, descricao: true, id: true } } } }
-      }
-    });
+  async findAll(page: number = 1, limit: number = 7) {
+    //calcula quantos registros pular
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.compra.findMany({
+        skip,
+        take: limit,
+        orderBy: { id: 'desc' },
+        include: {
+          fornecedor: { select: { nome: true, cnpj: true } },
+          funcionario: { select: { nome: true, cpf: true } },
+          items: { include: { produto: { select: { nome: true, preco: true, estoque: true, categoria_produtoId: true, descricao: true, id: true } } } }
+        }
+      }),
+      this.prisma.compra.count(),
+    ])
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   findOne(id: number) {

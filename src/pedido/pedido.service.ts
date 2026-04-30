@@ -20,14 +20,24 @@ export class PedidoService {
     });
   }
 
-  async findAll() {
-    return await this.prisma.pedido.findMany({
-      include: {
-        cliente: { select: { nome: true, telefone: true } },
-        funcionario: { select: { nome: true } },
-        items: { include: { produto: { select: { nome: true, preco: true, estoque: true, categoria_produtoId: true, id: true } } } }
-      }
-    });
+  async findAll(page: number = 1, limit: number = 7) {
+    //Calcula quantos registros pular
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.pedido.findMany({
+        skip,
+        take: limit,
+        orderBy: { id: 'asc' },
+        include: {
+          cliente: { select: { nome: true, telefone: true } },
+          funcionario: { select: { nome: true } },
+          items: { include: { produto: { select: { nome: true, preco: true, estoque: true, categoria_produtoId: true, id: true } } } }
+        }
+      }),
+      this.prisma.pedido.count(),
+    ]);
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   findOne(id: number) {
@@ -65,7 +75,7 @@ export class PedidoService {
     await this.prisma.itemPedido.deleteMany({
       where: { pedidoId: id }
     });
-    
+
     // Depois deletamos o pedido
     return this.prisma.pedido.delete({
       where: { id },
