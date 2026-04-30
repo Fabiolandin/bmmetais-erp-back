@@ -14,8 +14,20 @@ export class FornecedorService {
     });
   }
 
-  findAll() {
-    return this.prisma.fornecedor.findMany();
+  async findAll(page: number = 1, limit: number = 7) {
+    //calcula quantos registros pular
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.fornecedor.findMany({
+        skip,
+        take: limit,
+        orderBy: { id: 'asc' },
+      }),
+      this.prisma.fornecedor.count(),
+    ]);
+
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   findOne(id: number) {
