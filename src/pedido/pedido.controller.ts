@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
@@ -16,8 +16,11 @@ export class PedidoController {
   }
 
   @Get()
-  findAll() {
-    return this.pedidoService.findAll();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '7',
+  ) {
+    return this.pedidoService.findAll(+page, +limit);
   }
 
   @Get(':id')

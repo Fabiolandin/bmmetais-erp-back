@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CompraService } from './compra.service';
 import { CreateCompraDto } from './dto/create-compra.dto';
 import { UpdateCompraDto } from './dto/update-compra.dto';
@@ -16,8 +16,11 @@ export class CompraController {
   }
 
   @Get()
-  findAll() {
-    return this.compraService.findAll();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '7',
+  ) {
+    return this.compraService.findAll(+page, +limit);
   }
 
   @Get(':id')
