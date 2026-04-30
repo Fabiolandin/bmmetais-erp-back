@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CategoriaProdutoService } from './categoria_produto.service';
 import { CreateCategoriaProdutoDto } from './dto/create-categoria_produto.dto';
 import { UpdateCategoriaProdutoDto } from './dto/update-categoria_produto.dto';
@@ -16,8 +16,11 @@ export class CategoriaProdutoController {
   }
 
   @Get()
-  findAll() {
-    return this.categoriaProdutoService.findAll();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '7',
+  ) {
+    return this.categoriaProdutoService.findAll(+page, +limit);
   }
 
   @Get(':id')
