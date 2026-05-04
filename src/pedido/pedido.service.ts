@@ -10,14 +10,26 @@ export class PedidoService {
 
   create(createPedidoDto: CreatePedidoDto) {
     const { items, ...dadosPedido } = createPedidoDto;
-    return this.prisma.pedido.create({
-      data: {
-        ...dadosPedido,
-        items: {
-          create: items,
-        },
-      },
-    });
+
+    return this.prisma.$transaction(async (tx) => {
+
+      const pedido = await tx.pedido.create({
+        data: {
+          ...dadosPedido,
+          items: { create: items }
+        }
+      })
+
+      //depois atualiza o estoque
+      for (const item of items) {
+        await tx.produto.update({
+          where: { id: item.produtoId },
+          data: { estoque: { decrement: item.quantidade } }
+        })
+      }
+
+      return pedido;
+    })
   }
 
   async findAll(page: number = 1, limit: number = 7) {
