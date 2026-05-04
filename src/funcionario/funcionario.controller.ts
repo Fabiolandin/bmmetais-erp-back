@@ -3,12 +3,15 @@ import { FuncionarioService } from './funcionario.service';
 import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
 import { Funcionario } from '@prisma/client';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Funcionários')
 @Controller('funcionario')
 export class FuncionarioController {
   constructor(private readonly funcionarioService: FuncionarioService) { }
 
   @Post()
+  @ApiOperation({ summary: 'Criar um novo funcionário' })
   create(
     @Body() createFuncionarioDto: CreateFuncionarioDto
   ): Promise<Funcionario> {
@@ -16,6 +19,7 @@ export class FuncionarioController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Listar todos os funcionários' })
   findAll(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '7',
@@ -24,16 +28,19 @@ export class FuncionarioController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Buscar um funcionário pelo ID' })
   findOne(@Param('id') id: string) {
     return this.funcionarioService.findOne(+id);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Atualizar um funcionário pelo ID' })
   update(@Param('id') id: string, @Body() updateFuncionarioDto: UpdateFuncionarioDto) {
     return this.funcionarioService.update(+id, updateFuncionarioDto);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Deletar um funcionário pelo ID' })
   remove(@Param('id') id: string) {
     return this.funcionarioService.remove(+id);
   }

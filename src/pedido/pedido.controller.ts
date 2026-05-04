@@ -3,12 +3,15 @@ import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { Pedido } from '@prisma/client';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Pedidos')
 @Controller('pedido')
 export class PedidoController {
   constructor(private readonly pedidoService: PedidoService) { }
 
   @Post()
+  @ApiOperation({ summary: 'Criar um novo pedido' })
   create(
     @Body() createPedidoDto: CreatePedidoDto
   ): Promise<Pedido> {
@@ -16,6 +19,7 @@ export class PedidoController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Listar todos os pedidos' })
   findAll(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '7',
@@ -24,16 +28,19 @@ export class PedidoController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Buscar um pedido pelo ID' })
   findOne(@Param('id') id: string) {
     return this.pedidoService.findOne(+id);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Atualizar um pedido pelo ID' })
   update(@Param('id') id: string, @Body() updatePedidoDto: UpdatePedidoDto) {
     return this.pedidoService.update(+id, updatePedidoDto);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Deletar um pedido pelo ID' })
   remove(@Param('id') id: string) {
     return this.pedidoService.remove(+id);
   }
