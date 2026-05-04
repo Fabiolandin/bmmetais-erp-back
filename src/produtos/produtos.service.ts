@@ -57,4 +57,18 @@ export class ProdutosService {
       where: { id },
     });
   }
+
+  async updateEstoque(produtoId: number, quantidade: number) {
+    return this.prisma.produto.update({
+      where: { id: produtoId },
+      data: { estoque: +quantidade },
+    });
+  }
+
+  async updateEstoqueSaida(produtoId: number, quantidade: number) {
+    return this.prisma.produto.update({
+      where: { id: produtoId },
+      data: { estoque: -quantidade },
+    });
+  }
 }
