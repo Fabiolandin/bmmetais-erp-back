@@ -10,13 +10,25 @@ export class CompraService {
 
   create(createCompraDto: CreateCompraDto) {
     const { items, ...dadosCompra } = createCompraDto;
-    return this.prisma.compra.create({
-      data: {
-        ...dadosCompra,
-        items: {
-          create: items,
-        },
-      },
+
+    return this.prisma.$transaction(async (tx) => {
+
+      const compra = await tx.compra.create({
+        data: {
+          ...dadosCompra,
+          items: { create: items }
+        }
+      });
+
+      //depois atualiza o estoque
+      for (const item of items) {
+        await tx.produto.update({
+          where: { id: item.produtoId },
+          data: { estoque: { increment: item.quantidade } }
+        });
+      }
+
+      return compra;
     });
   }
 
