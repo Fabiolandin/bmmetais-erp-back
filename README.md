@@ -1,98 +1,170 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# ⚙️ BM Metais — Backend (ERP API)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST do sistema de gestão da BM Metais. Aqui fica toda a lógica de negócio, as regras, o banco de dados e os endpoints que o front consome pra fazer tudo funcionar.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+> Esse projeto é o back-end do ERP e trabalha em conjunto com o [front-end](https://github.com/Fabiolandin/bmmetais-frontend).
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🚀 Tecnologias usadas
 
-## Project setup
+| Tecnologia | Pra que serve aqui |
+|---|---|
+| **NestJS 11** | Framework principal — módulos, controllers, services, tudo organizado |
+| **TypeScript** | Tipagem estática, menos bug, mais confiança |
+| **Prisma ORM** | Acesso ao banco com queries seguras e schema declarativo |
+| **SQLite (better-sqlite3)** | Banco de dados local — simples, sem precisar instalar servidor |
+| **Swagger (OpenAPI)** | Documentação interativa da API gerada automaticamente |
+| **class-validator** | Validação dos dados que chegam nas requisições |
+| **Jest** | Testes unitários e de integração |
 
-```bash
-$ npm install
+---
+
+## 📁 Estrutura do projeto
+
+```
+src/
+├── app.module.ts           # Módulo raiz — junta tudo
+├── main.ts                 # Ponto de entrada, configura o Swagger e o CORS
+├── database/               # Configuração do Prisma
+├── categoria_produto/      # Módulo de categorias
+├── produtos/               # Módulo de produtos
+├── cliente/                # Módulo de clientes
+├── funcionario/            # Módulo de funcionários
+├── fornecedor/             # Módulo de fornecedores
+├── pedido/                 # Módulo de pedidos
+├── compra/                 # Módulo de compras
+└── validationSchemas/      # Pipes de validação globais
+
+prisma/
+└── schema.prisma           # Definição dos models do banco
 ```
 
-## Compile and run the project
+Cada módulo segue o mesmo padrão do NestJS: `controller → service → dto → entity`.
+
+---
+
+## 🗺️ Rotas da API
+
+Todos os módulos seguem o padrão CRUD com paginação. A base URL é `http://localhost:3000`.
+
+### 📦 Produtos — `/produtos`
+| Método | Rota | O que faz |
+|---|---|---|
+| `GET` | `/produtos?page=1&limit=7` | Lista todos os produtos (paginado) |
+| `GET` | `/produtos/:id` | Busca um produto pelo ID |
+| `POST` | `/produtos` | Cria um novo produto |
+| `PATCH` | `/produtos/:id` | Atualiza um produto |
+| `DELETE` | `/produtos/:id` | Remove um produto |
+
+### 🏷️ Categorias de Produto — `/categoria_produto`
+| Método | Rota | O que faz |
+|---|---|---|
+| `GET` | `/categoria_produto` | Lista todas as categorias |
+| `GET` | `/categoria_produto/:id` | Busca uma categoria pelo ID |
+| `POST` | `/categoria_produto` | Cria uma nova categoria |
+| `PATCH` | `/categoria_produto/:id` | Atualiza uma categoria |
+| `DELETE` | `/categoria_produto/:id` | Remove uma categoria |
+
+### 👤 Clientes — `/cliente`
+| Método | Rota | O que faz |
+|---|---|---|
+| `GET` | `/cliente` | Lista todos os clientes |
+| `GET` | `/cliente/:id` | Busca um cliente pelo ID |
+| `POST` | `/cliente` | Cadastra um novo cliente |
+| `PATCH` | `/cliente/:id` | Atualiza um cliente |
+| `DELETE` | `/cliente/:id` | Remove um cliente |
+
+### 👷 Funcionários — `/funcionario`
+| Método | Rota | O que faz |
+|---|---|---|
+| `GET` | `/funcionario` | Lista todos os funcionários |
+| `GET` | `/funcionario/:id` | Busca um funcionário pelo ID |
+| `POST` | `/funcionario` | Cadastra um novo funcionário |
+| `PATCH` | `/funcionario/:id` | Atualiza um funcionário |
+| `DELETE` | `/funcionario/:id` | Remove um funcionário |
+
+### 🚚 Fornecedores — `/fornecedor`
+| Método | Rota | O que faz |
+|---|---|---|
+| `GET` | `/fornecedor` | Lista todos os fornecedores |
+| `GET` | `/fornecedor/:id` | Busca um fornecedor pelo ID |
+| `POST` | `/fornecedor` | Cadastra um novo fornecedor |
+| `PATCH` | `/fornecedor/:id` | Atualiza um fornecedor |
+| `DELETE` | `/fornecedor/:id` | Remove um fornecedor |
+
+### 🛒 Pedidos — `/pedido`
+| Método | Rota | O que faz |
+|---|---|---|
+| `GET` | `/pedido?page=1&limit=7` | Lista todos os pedidos (paginado) |
+| `GET` | `/pedido/:id` | Busca um pedido pelo ID |
+| `POST` | `/pedido` | Cria um novo pedido |
+| `PATCH` | `/pedido/:id` | Atualiza um pedido |
+| `DELETE` | `/pedido/:id` | Remove um pedido |
+
+### 🧾 Compras — `/compra`
+| Método | Rota | O que faz |
+|---|---|---|
+| `GET` | `/compra?page=1&limit=7` | Lista todas as compras (paginado) |
+| `GET` | `/compra/:id` | Busca uma compra pelo ID |
+| `POST` | `/compra` | Registra uma nova compra |
+| `PATCH` | `/compra/:id` | Atualiza uma compra |
+| `DELETE` | `/compra/:id` | Remove uma compra |
+
+---
+
+## 🗄️ Banco de dados
+
+O schema do Prisma define os seguintes models:
+
+- **Cliente** — nome, CPF, telefone, email
+- **Funcionario** — nome, CPF
+- **Fornecedor** — nome, CNPJ, telefone, email
+- **Produto** — nome, descrição, preço, estoque, categoria
+- **Categoria_Produto** — agrupamento dos produtos
+- **Pedido** — vínculo entre cliente, funcionário e itens
+- **ItemPedido** — produtos dentro de um pedido (quantidade + preço unitário)
+- **Compra** — vínculo entre fornecedor, funcionário e itens
+- **ItemCompra** — produtos dentro de uma compra
+
+---
+
+## 📖 Documentação interativa (Swagger)
+
+Com a API rodando, acesse `http://localhost:3000/api` pra ver e testar todas as rotas direto pelo navegador. Não precisa de Postman, Insomnia, nada.
+
+---
+
+## ⚙️ Como rodar
 
 ```bash
-# development
-$ npm run start
+# Instala as dependências
+npm install
 
-# watch mode
-$ npm run start:dev
+# Roda as migrations do banco
+npx prisma migrate dev
 
-# production mode
-$ npm run start:prod
+# Sobe em modo desenvolvimento (com hot reload)
+npm run start:dev
 ```
 
-## Run tests
+A API vai estar disponível em `http://localhost:3000`.
+
+---
+
+## 📦 Outros comandos úteis
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run start:prod   # Roda em modo produção
+npm run build        # Compila o TypeScript
+npm run test         # Roda os testes
+npm run test:cov     # Testes com cobertura de código
+npm run lint         # Verifica e corrige o código
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🔗 Projeto relacionado
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Esse back-end serve os dados pro **BM Metais Frontend** — vai lá conferir também:
+👉 [bmmetais-frontend](https://github.com/Fabiolandin/bmmetais-frontend)
