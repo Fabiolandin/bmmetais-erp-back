@@ -83,14 +83,30 @@ export class PedidoService {
   }
 
   async remove(id: number) {
-    // Primeiro deletamos os itens vinculados ao pedido
-    await this.prisma.itemPedido.deleteMany({
-      where: { pedidoId: id }
-    });
 
-    // Depois deletamos o pedido
-    return this.prisma.pedido.delete({
-      where: { id },
-    });
+    return this.prisma.$transaction(async (tx) => {
+
+      const itensPedido = await tx.itemPedido.findMany({
+        where: { pedidoId: id }
+      });
+
+      for (const item of itensPedido) {
+        await tx.produto.update({
+          where: { id: item.produtoId },
+          data: { estoque: { increment: item.quantidade } }
+        })
+      }
+
+      // Primeiro deletamos os itens vinculados ao pedido
+      await tx.itemPedido.deleteMany({
+        where: { pedidoId: id }
+      });
+
+      // Depois deletamos o pedido
+      return tx.pedido.delete({
+        where: { id },
+      });
+
+    })
   }
 }
