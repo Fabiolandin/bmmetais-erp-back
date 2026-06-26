@@ -83,12 +83,39 @@ export class CompraService {
   }
 
   async remove(id: number) {
-    //primeiro deletamos os intes vinculados a compra
-    await this.prisma.itemCompra.deleteMany({
-      where: { compraId: id },
-    });
-    return await this.prisma.compra.delete({
-      where: { id },
-    });
+
+    // const itensCompra = await this.prisma.itemCompra.findMany({
+    //   where: {compraId: id},
+    // })
+
+    // for (const item of itensCompra){
+    //   await this.prisma.produto.update({
+    //     where: { id: item.produtoId },
+    //     data: { estoque: {decrement: item.quantidade}}
+    //   })
+    // }
+
+    return this.prisma.$transaction(async (tx) => {
+
+      const itensCompra = await tx.itemCompra.findMany({
+        where: {compraId: id},
+      })
+  
+      for (const item of itensCompra){
+        await tx.produto.update({
+          where: { id: item.produtoId },
+          data: { estoque: {decrement: item.quantidade}}
+        })
+      }
+  
+      //primeiro deletamos os intes vinculados a compra
+      await tx.itemCompra.deleteMany({
+        where: { compraId: id },
+      });
+      return await tx.compra.delete({
+        where: { id },
+      });
+    })
+
   }
 }
