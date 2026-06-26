@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PrismaService } from 'src/database/prisma.service';
@@ -8,8 +8,27 @@ export class PedidoService {
   @Inject()
   private readonly prisma: PrismaService;
 
-  create(createPedidoDto: CreatePedidoDto) {
+  async create(createPedidoDto: CreatePedidoDto) {
     const { items, ...dadosPedido } = createPedidoDto;
+    
+    for(const item of items){
+
+    //puxar todos os produtos cujo o id esta relacionado com items.produtoId
+    const produtos = await this.prisma.produto.findUnique({
+      where: { id: item.produtoId }
+    })
+
+    if(!produtos) {
+      throw new Error('Produto não encontrado')
+    }
+
+    //comparar estoque e quebrar já
+      if(produtos.estoque < item.quantidade){
+        throw new BadRequestException(
+          `Estoque insuficiente para o produto ${produtos.nome}`
+        );
+      }
+    }
 
     return this.prisma.$transaction(async (tx) => {
 
