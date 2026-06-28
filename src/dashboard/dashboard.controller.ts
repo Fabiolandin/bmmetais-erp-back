@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Dashboard')
 @Controller('dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
@@ -8,11 +10,6 @@ export class DashboardController {
   @Get()
   findAll() {
     return this.dashboardService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.dashboardService.findOne(+id);
   }
 
 }
