@@ -9,9 +9,10 @@ import { FuncionarioModule } from './funcionario/funcionario.module';
 import { CompraModule } from './compra/compra.module';
 import { APP_PIPE } from '@nestjs/core';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { PedidosGraficoModule } from './pedidosgrafico/pedidosgrafico.module';
 
 @Module({
-  imports: [ProdutosModule, DatabaseModule, CategoriaProdutoModule, ClienteModule, FornecedorModule, PedidoModule, FuncionarioModule, CompraModule, DashboardModule],
+  imports: [ProdutosModule, DatabaseModule, CategoriaProdutoModule, ClienteModule, FornecedorModule, PedidoModule, FuncionarioModule, CompraModule, DashboardModule, PedidosGraficoModule],
   providers: [
     {
       provide: APP_PIPE,
