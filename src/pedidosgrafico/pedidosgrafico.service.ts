@@ -31,5 +31,7 @@ export class PedidosGraficoService {
       total_pedidos: Number(item.total_pedidos),
       total_faturamento: Number(item.total_faturamento)
     }));
+
+    //conversor para tipos limpos
   }
 }
