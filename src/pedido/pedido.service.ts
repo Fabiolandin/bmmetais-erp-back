@@ -10,25 +10,6 @@ export class PedidoService {
 
   async create(createPedidoDto: CreatePedidoDto) {
     const { items, ...dadosPedido } = createPedidoDto;
-    
-    for(const item of items){
-
-    //puxar todos os produtos cujo o id esta relacionado com items.produtoId
-    const produtos = await this.prisma.produto.findUnique({
-      where: { id: item.produtoId }
-    })
-
-    if(!produtos) {
-      throw new Error('Produto não encontrado')
-    }
-
-    //comparar estoque e quebrar já
-      if(produtos.estoque < item.quantidade){
-        throw new BadRequestException(
-          `Estoque insuficiente para o produto ${produtos.nome}`
-        );
-      }
-    }
 
     return this.prisma.$transaction(async (tx) => {
 
@@ -39,12 +20,22 @@ export class PedidoService {
         }
       })
 
-      //depois atualiza o estoque
+      //verifica se o produto tem estoque e ja decrementa tornando 1 instrução só
       for (const item of items) {
-        await tx.produto.update({
-          where: { id: item.produtoId },
+        const resultado = await tx.produto.updateMany({
+          where: {
+            id: item.produtoId,
+            estoque: { gte: item.quantidade } //gte (greater than or equal to): maior ou igual a (≥).
+          },
           data: { estoque: { decrement: item.quantidade } }
         })
+
+        //caso não consiga o update, retorna 0, se for 0 a transaction quebra e da rollback
+        if (resultado.count === 0) {
+          throw new BadRequestException(
+            `Produto ${item.produtoId} não encontrado ou estoque insuficiente`
+          )
+        }
       }
 
       return pedido;
