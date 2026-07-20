@@ -1,7 +1,8 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PrismaService } from 'src/database/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PedidoService {
@@ -62,8 +63,8 @@ export class PedidoService {
     return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
-  findOne(id: number) {
-    return this.prisma.pedido.findUnique({
+  async findOne(id: number) {
+    const pedido = await this.prisma.pedido.findUnique({
       where: { id },
       select: {
         id: true, clienteId: true, funcionarioId: true,
@@ -77,19 +78,32 @@ export class PedidoService {
         }
       }
     });
+
+    if (!pedido) {
+      throw new NotFoundException(`Pedido ${id} não encontrado`);
+    }
+
+    return pedido;
   }
 
   update(id: number, updatePedidoDto: UpdatePedidoDto) {
     const { items, ...dadosPedido } = updatePedidoDto;
-    return this.prisma.pedido.update({
-      where: { id },
-      data: {
-        ...dadosPedido,
-        items: {
-          create: items,
+    try{
+      return this.prisma.pedido.update({
+        where: { id },
+        data: {
+          ...dadosPedido,
+          items: {
+            create: items,
+          },
         },
-      },
-    });
+      });
+    } catch (error){
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+        throw new NotFoundException(`Pedido ${id} não encontrado`);
+    }
+    throw error;
+  }
   }
 
   async remove(id: number) {
