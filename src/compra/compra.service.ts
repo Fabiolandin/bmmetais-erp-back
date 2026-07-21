@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCompraDto } from './dto/create-compra.dto';
 import { UpdateCompraDto } from './dto/update-compra.dto';
 import { PrismaService } from 'src/database/prisma.service';
@@ -52,8 +52,8 @@ export class CompraService {
     return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
-  findOne(id: number) {
-    return this.prisma.compra.findUnique({
+  async findOne(id: number) {
+    const compra = await this.prisma.compra.findUnique({
       where: { id },
       select: {
         id: true, fornecedorId: true, funcionarioId: true,
@@ -67,6 +67,10 @@ export class CompraService {
         }
       }
     });
+
+    if (!compra) {
+      throw new NotFoundException(`Compra ${id} não encontrada`)
+    }
   }
 
   update(id: number, updateCompraDto: UpdateCompraDto) {
@@ -98,16 +102,16 @@ export class CompraService {
     return this.prisma.$transaction(async (tx) => {
 
       const itensCompra = await tx.itemCompra.findMany({
-        where: {compraId: id},
+        where: { compraId: id },
       })
-  
-      for (const item of itensCompra){
+
+      for (const item of itensCompra) {
         await tx.produto.update({
           where: { id: item.produtoId },
-          data: { estoque: {decrement: item.quantidade}}
+          data: { estoque: { decrement: item.quantidade } }
         })
       }
-  
+
       //primeiro deletamos os intes vinculados a compra
       await tx.itemCompra.deleteMany({
         where: { compraId: id },
