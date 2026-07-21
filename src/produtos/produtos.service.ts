@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { PrismaService } from 'src/database/prisma.service';
@@ -39,10 +39,18 @@ export class ProdutosService {
 
   }
 
-  findOne(id: number) {
-    return this.prisma.produto.findUnique({
+  async findOne(id: number) {
+    const produto = await this.prisma.produto.findUnique({
       where: { id },
+      select:{
+        id: true, nome: true, descricao: true, preco: true, categoria_produtoId:true, estoque:true, createdAt: true, updatedAt: true,
+        categoria: { select: {id: true, nome: true}}
+      }
     });
+
+    if(!produto){
+      throw new NotFoundException(`Produto ${id} não encontrado`)
+    }
   }
 
   update(id: number, updateProdutoDto: UpdateProdutoDto) {
