@@ -89,7 +89,6 @@ export class PedidoService {
   async update(id: number, updatePedidoDto: UpdatePedidoDto) {
     const { items, ...dadosPedido } = updatePedidoDto;
 
-    try{
       return await this.prisma.pedido.update({
         where: { id },
         data: {
@@ -99,17 +98,10 @@ export class PedidoService {
           },
         },
       });
-    } catch (error){
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-        throw new NotFoundException(`Pedido ${id} não encontrado`);
-    }
-    throw error;
-  }
   }
 
   async remove(id: number) {
 
-    try{
           return await this.prisma.$transaction(async (tx) => {
 
       const itensPedido = await tx.itemPedido.findMany({
@@ -134,12 +126,5 @@ export class PedidoService {
       });
 
     })
-
-    } catch (error){
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-        throw new NotFoundException(`Pedido ${id} não encontrado`);
-    }
-    throw error;
-  }
   }
 }
