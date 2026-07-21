@@ -89,20 +89,20 @@ export class PedidoService {
   async update(id: number, updatePedidoDto: UpdatePedidoDto) {
     const { items, ...dadosPedido } = updatePedidoDto;
 
-      return await this.prisma.pedido.update({
-        where: { id },
-        data: {
-          ...dadosPedido,
-          items: {
-            create: items,
-          },
+    return await this.prisma.pedido.update({
+      where: { id },
+      data: {
+        ...dadosPedido,
+        items: {
+          create: items,
         },
-      });
+      },
+    });
   }
 
   async remove(id: number) {
 
-          return await this.prisma.$transaction(async (tx) => {
+    return await this.prisma.$transaction(async (tx) => {
 
       const itensPedido = await tx.itemPedido.findMany({
         where: { pedidoId: id }
