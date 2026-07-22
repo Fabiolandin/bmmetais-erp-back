@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFornecedorDto } from './dto/create-fornecedor.dto';
 import { UpdateFornecedorDto } from './dto/update-fornecedor.dto';
 import { PrismaService } from 'src/database/prisma.service';
@@ -30,10 +30,16 @@ export class FornecedorService {
     return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
-  findOne(id: number) {
-    return this.prisma.fornecedor.findUnique({
+  async findOne(id: number) {
+    const fornecedor = await this.prisma.fornecedor.findUnique({
       where: { id },
     });
+
+    if(!fornecedor){
+      throw new NotFoundException(`Fornecedor ${id} não encontrado`)
+    }
+
+    return fornecedor;
   }
 
   update(id: number, updateFornecedorDto: UpdateFornecedorDto) {
