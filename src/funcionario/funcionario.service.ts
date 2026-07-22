@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
 import { PrismaService } from 'src/database/prisma.service';
@@ -32,10 +32,16 @@ export class FuncionarioService {
     return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
-  findOne(id: number) {
-    return this.prisma.funcionario.findUnique({
+  async findOne(id: number) {
+    const funcionario = await this.prisma.funcionario.findUnique({
       where: { id }
     })
+
+    if(!funcionario){
+      throw new NotFoundException(`Funcionario ${id} não encontrado`)
+    }
+
+    return funcionario
   }
 
   update(id: number, updateFuncionarioDto: UpdateFuncionarioDto) {
