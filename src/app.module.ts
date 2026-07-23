@@ -1,4 +1,4 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ProdutosModule } from './produtos/produtos.module';
 import { DatabaseModule } from './database/database.module';
 import { CategoriaProdutoModule } from './categoria_produto/categoria_produto.module';
@@ -10,6 +10,7 @@ import { CompraModule } from './compra/compra.module';
 import { APP_PIPE } from '@nestjs/core';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { PedidosGraficoModule } from './pedidosgrafico/pedidosgrafico.module';
+import { ValidationPipe } from './validationSchemas/validation.pipe';
 
 @Module({
   imports: [ProdutosModule, DatabaseModule, CategoriaProdutoModule, ClienteModule, FornecedorModule, PedidoModule, FuncionarioModule, CompraModule, DashboardModule, PedidosGraficoModule],
