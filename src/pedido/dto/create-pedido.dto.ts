@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { isArray, IsNotEmpty, IsNumber } from "class-validator";
 
 export class CreatePedidoDto {
     @IsNumber()
@@ -8,7 +8,8 @@ export class CreatePedidoDto {
     @IsNumber()
     @IsNotEmpty()
     funcionarioId: number
-
+    
+    @IsNotEmpty()
     items: {
         produtoId: number
         quantidade: number

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber } from "class-validator";
 
 export class CreateCompraDto {
     @IsNumber()
@@ -9,6 +9,8 @@ export class CreateCompraDto {
     @IsNotEmpty()
     funcionarioId: number
 
+    @IsArray()
+    @IsNotEmpty()
     items: {
         produtoId: number
         quantidade: number

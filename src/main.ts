@@ -10,7 +10,7 @@ async function bootstrap() {
     .setTitle('Bmmetais ERP API')
     .setDescription('Documentação da API do sistema de gestão Bmmetais ERP')
     .setVersion('1.0')
-    .addBearerAuth() // Adicione este método se sua API usa autenticação JWT
+   // .addBearerAuth() // Adicione este método se sua API usa autenticação JWT
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

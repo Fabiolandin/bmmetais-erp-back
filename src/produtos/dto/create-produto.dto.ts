@@ -17,6 +17,12 @@ export class CreateProdutoDto {
     @ApiProperty({ example: 10, description: 'Preço do produto' })
     preco: number
 
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiProperty({ example: 10, description: 'Estoque do produto' })
     estoque: number
+
+    @IsNumber()
+    @IsNotEmpty()
     categoria_produtoId: number
 }
