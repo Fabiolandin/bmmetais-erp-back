@@ -14,7 +14,7 @@ export class FuncionarioController {
   @ApiOperation({ summary: 'Criar um novo funcionário' })
   create(
     @Body() createFuncionarioDto: CreateFuncionarioDto
-  ): Promise<Funcionario> {
+  ): Promise<Omit<Funcionario, 'senha'>> {
     return this.funcionarioService.create(createFuncionarioDto);
   }
 
@@ -35,7 +35,8 @@ export class FuncionarioController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Atualizar um funcionário pelo ID' })
-  update(@Param('id') id: string, @Body() updateFuncionarioDto: UpdateFuncionarioDto) {
+  update(@Param('id') id: string, @Body() updateFuncionarioDto: UpdateFuncionarioDto) 
+  : Promise<Omit<Funcionario, 'senha'>> {
     return this.funcionarioService.update(+id, updateFuncionarioDto);
   }
 

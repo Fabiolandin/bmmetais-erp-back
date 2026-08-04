@@ -2,16 +2,27 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
 import { PrismaService } from 'src/database/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class FuncionarioService {
   @Inject()
   private readonly prisma: PrismaService
 
-  create(createFuncionarioDto: CreateFuncionarioDto) {
-    return this.prisma.funcionario.create({
-      data: createFuncionarioDto
+  async create(createFuncionarioDto: CreateFuncionarioDto) {
+    const senhaHash = await bcrypt.hash(createFuncionarioDto.senha, 10);
+
+    const funcionario = await this.prisma.funcionario.create({
+      data: {
+        ...createFuncionarioDto,
+        senha: senhaHash,
+        role: createFuncionarioDto.role ?? 'funcionario',
+      },
     })
+
+    //retornando o funcionario sem a senha
+    const { senha, ...funcionarioSemSenha } = funcionario;
+    return funcionarioSemSenha;
   }
 
   async findAll(page: number = 1, limit: number = 7) {
@@ -23,6 +34,15 @@ export class FuncionarioService {
         skip,
         take: limit,
         orderBy: { id: 'asc' },
+        select: {
+          id: true,
+          nome: true,
+          email: true,
+          cpf: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        }
       }),
       this.prisma.funcionario.count(),
     ]);
@@ -34,21 +54,42 @@ export class FuncionarioService {
 
   async findOne(id: number) {
     const funcionario = await this.prisma.funcionario.findUnique({
-      where: { id }
+      where: { id },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        cpf: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      }
+
     })
 
-    if(!funcionario){
+    if (!funcionario) {
       throw new NotFoundException(`Funcionario ${id} não encontrado`)
     }
 
     return funcionario
   }
 
-  update(id: number, updateFuncionarioDto: UpdateFuncionarioDto) {
-    return this.prisma.funcionario.update({
+  async update(id: number, updateFuncionarioDto: UpdateFuncionarioDto) {
+
+    const data = { ...updateFuncionarioDto };
+
+    if (data.senha) {
+      data.senha = await bcrypt.hash(data.senha, 10);
+    }
+
+    const funcionario = await this.prisma.funcionario.update({
       where: { id },
-      data: updateFuncionarioDto
+      data,
     })
+
+    //retornando o funcionario sem a senha
+    const { senha, ...funcionarioSemSenha } = funcionario;
+    return funcionarioSemSenha;
   }
 
   remove(id: number) {

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateFuncionarioDto {
     @IsString()
@@ -11,4 +11,19 @@ export class CreateFuncionarioDto {
     @IsNotEmpty()
     @ApiProperty({ example: '123.456.789-10' })
     cpf: string
+
+    @IsEmail()
+    @IsNotEmpty()
+    @ApiProperty({ example: 'funcionario@bmmetais.com' })
+    email: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({ example: 'senha123' })
+    senha: string
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty({ example: 'funcionario', required: false })
+    role?: string
 }
