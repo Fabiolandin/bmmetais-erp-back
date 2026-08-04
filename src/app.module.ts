@@ -11,9 +11,10 @@ import { APP_PIPE } from '@nestjs/core';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { PedidosGraficoModule } from './pedidosgrafico/pedidosgrafico.module';
 import { ValidationPipe } from './validationSchemas/validation.pipe';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [ProdutosModule, DatabaseModule, CategoriaProdutoModule, ClienteModule, FornecedorModule, PedidoModule, FuncionarioModule, CompraModule, DashboardModule, PedidosGraficoModule],
+  imports: [ProdutosModule, DatabaseModule, CategoriaProdutoModule, ClienteModule, FornecedorModule, PedidoModule, FuncionarioModule, CompraModule, DashboardModule, PedidosGraficoModule, AuthModule],
   providers: [
     {
       provide: APP_PIPE,
