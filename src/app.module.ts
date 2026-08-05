@@ -7,11 +7,12 @@ import { FornecedorModule } from './fornecedor/fornecedor.module';
 import { PedidoModule } from './pedido/pedido.module';
 import { FuncionarioModule } from './funcionario/funcionario.module';
 import { CompraModule } from './compra/compra.module';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { PedidosGraficoModule } from './pedidosgrafico/pedidosgrafico.module';
 import { ValidationPipe } from './validationSchemas/validation.pipe';
 import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [ProdutosModule, DatabaseModule, CategoriaProdutoModule, ClienteModule, FornecedorModule, PedidoModule, FuncionarioModule, CompraModule, DashboardModule, PedidosGraficoModule, AuthModule],
@@ -19,7 +20,11 @@ import { AuthModule } from './auth/auth.module';
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,
-    }
-  ]
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule { }
