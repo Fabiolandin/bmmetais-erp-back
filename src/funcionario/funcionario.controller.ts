@@ -4,6 +4,7 @@ import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
 import { Funcionario } from '@prisma/client';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/roles.decorator';
 
 @ApiTags('Funcionários')
 @Controller('funcionario')
@@ -14,7 +15,7 @@ export class FuncionarioController {
   @ApiOperation({ summary: 'Criar um novo funcionário' })
   create(
     @Body() createFuncionarioDto: CreateFuncionarioDto
-  ): Promise<Omit<Funcionario, 'senha'>> {
+  ): Promise<Omit<Funcionario, 'senha'>> { //no create temos que usar o omit para tirar o senha do return
     return this.funcionarioService.create(createFuncionarioDto);
   }
 
@@ -34,6 +35,7 @@ export class FuncionarioController {
   }
 
   @Patch(':id')
+  @Roles('admin')
   @ApiOperation({ summary: 'Atualizar um funcionário pelo ID' })
   update(@Param('id') id: string, @Body() updateFuncionarioDto: UpdateFuncionarioDto) 
   : Promise<Omit<Funcionario, 'senha'>> {

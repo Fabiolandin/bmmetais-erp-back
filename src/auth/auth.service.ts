@@ -14,18 +14,20 @@ export class AuthService {
 
     async login(email: string, senha: string) {
 
-        // Verifica se o funcionário existe
+        // Verifica se o funcionário existe por email
         const funcionario = await this.prisma.funcionario.findUnique({
             where: { email },
         });
 
-
+        //se não existe
         if (!funcionario) {
             throw new UnauthorizedException('Credenciais inválidas');
         }
 
+        //comparando senhas
         const senhaValida = await bcrypt.compare(senha, funcionario.senha);
 
+        //senha invalida
         if (!senhaValida) {
             throw new UnauthorizedException('Credenciais inválidas');
         }

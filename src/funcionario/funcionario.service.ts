@@ -10,8 +10,10 @@ export class FuncionarioService {
   private readonly prisma: PrismaService
 
   async create(createFuncionarioDto: CreateFuncionarioDto) {
+    //Pegando a senha e criando Hash
     const senhaHash = await bcrypt.hash(createFuncionarioDto.senha, 10);
 
+    // se a senha vem dps do spread('...createFuncionarioDTO') ele sobrescreve o objeto literal
     const funcionario = await this.prisma.funcionario.create({
       data: {
         ...createFuncionarioDto,
@@ -75,9 +77,9 @@ export class FuncionarioService {
   }
 
   async update(id: number, updateFuncionarioDto: UpdateFuncionarioDto) {
-
     const data = { ...updateFuncionarioDto };
 
+    //se quiser atualizar senha, recebe senha e encripta com hash
     if (data.senha) {
       data.senha = await bcrypt.hash(data.senha, 10);
     }

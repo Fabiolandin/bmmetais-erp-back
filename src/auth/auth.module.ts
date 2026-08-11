@@ -7,6 +7,7 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({
 
   imports: [
+    //configurando como qualquer token deve ser gerado
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
