@@ -4,6 +4,7 @@ import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { Produto } from '@prisma/client';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/roles.decorator';
 
 @ApiTags('Produtos')
 @Controller('produtos')
@@ -34,6 +35,7 @@ export class ProdutosController {
   }
 
   @Patch(':id')
+  @Roles('admin')
   @ApiOperation({ summary: 'Atualizar um produto pelo ID' })
   update(@Param('id') id: string, @Body() updateProdutoDto: UpdateProdutoDto) {
     return this.produtosService.update(+id, updateProdutoDto);

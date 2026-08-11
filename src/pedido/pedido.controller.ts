@@ -4,6 +4,7 @@ import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { Pedido } from '@prisma/client';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/roles.decorator';
 
 @ApiTags('Pedidos')
 @Controller('pedido')
@@ -34,6 +35,7 @@ export class PedidoController {
   }
 
   @Patch(':id')
+  @Roles('admin')
   @ApiOperation({ summary: 'Atualizar um pedido pelo ID' })
   update(@Param('id') id: string, @Body() updatePedidoDto: UpdatePedidoDto) {
     return this.pedidoService.update(+id, updatePedidoDto);

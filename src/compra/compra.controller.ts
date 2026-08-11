@@ -4,6 +4,7 @@ import { CreateCompraDto } from './dto/create-compra.dto';
 import { UpdateCompraDto } from './dto/update-compra.dto';
 import { Compra } from '@prisma/client';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/roles.decorator';
 
 @ApiTags('Compras')
 @Controller('compra')
@@ -34,6 +35,7 @@ export class CompraController {
   }
 
   @Patch(':id')
+  @Roles('admin')
   @ApiOperation({ summary: 'Atualizar uma compra pelo ID' })
   update(@Param('id') id: string, @Body() updateCompraDto: UpdateCompraDto) {
     return this.compraService.update(+id, updateCompraDto);
