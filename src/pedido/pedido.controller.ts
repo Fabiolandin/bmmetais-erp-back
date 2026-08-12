@@ -42,6 +42,7 @@ export class PedidoController {
   }
 
   @Delete(':id')
+  @Roles('admin')
   @ApiOperation({ summary: 'Deletar um pedido pelo ID' })
   remove(@Param('id') id: string) {
     return this.pedidoService.remove(+id);

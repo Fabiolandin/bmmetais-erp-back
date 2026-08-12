@@ -42,6 +42,7 @@ export class CompraController {
   }
 
   @Delete(':id')
+  @Roles('admin')
   @ApiOperation({ summary: 'Deletar uma compra pelo ID' })
   remove(@Param('id') id: string) {
     return this.compraService.remove(+id);
