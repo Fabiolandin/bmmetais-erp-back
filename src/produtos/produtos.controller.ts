@@ -42,6 +42,7 @@ export class ProdutosController {
   }
 
   @Delete(':id')
+  @Roles('admin')
   @ApiOperation({ summary: 'Deletar um produto pelo ID' })
   remove(@Param('id') id: string) {
     return this.produtosService.remove(+id);
