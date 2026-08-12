@@ -12,6 +12,7 @@ export class FuncionarioController {
   constructor(private readonly funcionarioService: FuncionarioService) { }
 
   @Post()
+  @Roles('admin')
   @ApiOperation({ summary: 'Criar um novo funcionário' })
   create(
     @Body() createFuncionarioDto: CreateFuncionarioDto
@@ -43,6 +44,7 @@ export class FuncionarioController {
   }
 
   @Delete(':id')
+  @Roles('admin')
   @ApiOperation({ summary: 'Deletar um funcionário pelo ID' })
   remove(@Param('id') id: string) {
     return this.funcionarioService.remove(+id);
